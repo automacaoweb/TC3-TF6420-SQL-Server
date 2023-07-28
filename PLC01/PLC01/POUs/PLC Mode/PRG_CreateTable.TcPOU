@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PRG_CreateTable" Id="{82a831bd-de57-4e0e-a63f-a9339662086b}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_CreateTable
+VAR
+    fbPLCDBCreate	: FB_PLCDBCreateEvt(sNetID := '', tTimeout := T#5S);	//Bloco para criar a tabela
+    ColumnInfo		: ARRAY [0..8] OF ST_ColumnInfo ;						//Estrutura com a tabela a ser criada
+    tcMessage		: I_TcMessage;											//Variavel para tratamento das mensagens
+	bCreateTable	: BOOL ; 												//Bit para criar tabela
+	sError : STRING ;														//String com a mensagem de erro
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* Exemplos : 
+ColumnInfo[0].sName := 'colBigInt';     ColumnInfo[0].eType := E_ColumnType.BigInt;     ColumnInfo[0].nLength := 8;     ColumnInfo[0].sProperty := 'IDENTITY(1,1)';
+ColumnInfo[1].sName := 'colInteger';    ColumnInfo[1].eType := E_ColumnType.Integer;    ColumnInfo[1].nLength := 4;
+ColumnInfo[2].sName := 'colSmallInt';   ColumnInfo[2].eType := E_ColumnType.SmallInt;   ColumnInfo[2].nLength := 2;
+ColumnInfo[3].sName := 'colTinyInt';    ColumnInfo[3].eType := E_ColumnType.TinyInt;    ColumnInfo[3].nLength := 1;
+ColumnInfo[4].sName := 'colBit';        ColumnInfo[4].eType := E_ColumnType.BIT_;       ColumnInfo[4].nLength := 1;
+ColumnInfo[5].sName := 'colMoney';      ColumnInfo[5].eType := E_ColumnType.Money;      ColumnInfo[5].nLength := 8;
+ColumnInfo[6].sName := 'colFloat';      ColumnInfo[6].eType := E_ColumnType.Float;      ColumnInfo[6].nLength := 8;
+ColumnInfo[7].sName := 'colReal';       ColumnInfo[7].eType := E_ColumnType.REAL_;      ColumnInfo[7].nLength := 4;
+ColumnInfo[8].sName := 'colDateTime';   ColumnInfo[8].eType := E_ColumnType.DateTime;   ColumnInfo[8].nLength := 4;
+ColumnInfo[9].sName := 'colNText';      ColumnInfo[9].eType := E_ColumnType.NText;      ColumnInfo[9].nLength := 256;
+ColumnInfo[10].sName := 'colNChar';     ColumnInfo[10].eType := E_ColumnType.NChar;     ColumnInfo[10].nLength := 10;
+ColumnInfo[11].sName := 'colImage';     ColumnInfo[11].eType := E_ColumnType.Image;     ColumnInfo[11].nLength := 256;
+ColumnInfo[12].sName := 'colNVarChar';  ColumnInfo[12].eType := E_ColumnType.NVarChar;  ColumnInfo[12].nLength := 50;
+ColumnInfo[13].sName := 'colBinary';    ColumnInfo[13].eType := E_ColumnType.Binary;    ColumnInfo[13].nLength := 30;
+ColumnInfo[14].sName := 'colVarBinary'; ColumnInfo[14].eType := E_ColumnType.VarBinary; ColumnInfo[14].nLength := 20;
+*)
+
+(* A criação das tabelas pode ser feita pelo código do PLC, mas também através da janela Sql Query Edition *)
+(* Declaração da estrutura da tabela *)
+
+ColumnInfo[0].sName := 'ID';     ColumnInfo[0].eType := E_ColumnType.BigInt;     ColumnInfo[0].nLength := 8;     ColumnInfo[0].sProperty := 'IDENTITY(1,1)';
+ColumnInfo[1].sName := 'Timestamp';   ColumnInfo[1].eType := E_ColumnType.DateTime;   ColumnInfo[1].nLength := 4;
+ColumnInfo[2].sName := 'recipe';  ColumnInfo[2].eType := E_ColumnType.NVarChar;  ColumnInfo[2].nLength := 50;
+ColumnInfo[3].sName := 'parameter1';      ColumnInfo[3].eType := E_ColumnType.Float;      ColumnInfo[3].nLength := 8;
+ColumnInfo[4].sName := 'parameter2';      ColumnInfo[4].eType := E_ColumnType.Float;      ColumnInfo[4].nLength := 8;
+ColumnInfo[5].sName := 'parameter3';      ColumnInfo[5].eType := E_ColumnType.Float;      ColumnInfo[5].nLength := 8;
+ColumnInfo[6].sName := 'parameter4';      ColumnInfo[6].eType := E_ColumnType.Float;      ColumnInfo[6].nLength := 8;
+ColumnInfo[7].sName := 'parameter5';      ColumnInfo[7].eType := E_ColumnType.Float;      ColumnInfo[7].nLength := 8;
+ColumnInfo[8].sName := 'parameter6';      ColumnInfo[8].eType := E_ColumnType.Float;      ColumnInfo[8].nLength := 8;
+
+(* Para criar a tabela colocar a variavel bCreateTable em TRUE *)
+(* To Create Table put the bCreateTable variable in TRUE *)
+IF bCreateTable = TRUE THEN
+	IF fbPLCDBCreate.Table(
+		hDBID:= 1,
+		sTableName:= 'TB_PLCMODE', 
+		pTableCfg:= ADR(ColumnInfo), 
+		cbTableCfg:= SIZEOF(ColumnInfo))
+	THEN
+		IF fbPLCDBCreate.bError THEN
+			TcMessage:= fbPLCDBCreate.ipTcResult;
+			sError := 'Erro'; 
+		ELSE
+			sError := 'OK';
+		END_IF
+	END_IF
+	bCreateTable := FALSE ;	
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

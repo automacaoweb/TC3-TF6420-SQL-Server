@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PRG_DeleteRowSqlMode" Id="{7205cd82-5852-4c57-b6a8-955241a8c4f8}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_DeleteRowSqlMode
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

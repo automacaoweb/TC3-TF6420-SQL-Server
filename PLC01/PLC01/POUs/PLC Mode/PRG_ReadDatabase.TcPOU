@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PRG_ReadDatabase" Id="{b41990ae-1f9c-49fc-9016-3c48e85b39cf}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_ReadDatabase
+VAR
+//Variáveis gerais
+	hDBID: UDINT := 1 ;							//DB ID - Ver banco no database server
+    sTableName: T_MaxString := 'TB_PLCMODE' ;	//Nome da Tabela
+
+//Ler dados da tabela comando SELECT
+    fbPLCDBCmd   : FB_PLCDBCmdEvt(sNetID := '', tTimeout := T#5S);	//Bloco para leitura dos dados via comando SQL
+    sCommandSql  : STRING (1000); 									//Comando SQL	
+    stParametros : ARRAY [0..0] OF ST_ExpParameter; 				//Parametros usado no filtro SQL	
+    sReceita : STRING ; 											//Parametros usado no filtro SQL	
+	bCommandSelect: BOOL ;											//
+	sMenssageError : STRING ; 										//
+    nRecords : BYTE ;												//
+	DBToData : ARRAY [0..9] OF ST_Database;							//
+	
+//Ler dados da tabela usando o bloco Read Struct
+    fbPLCDBRead    	: FB_PLCDBReadEvt (sNetID := '', tTimeout := T#5S);	//Bloco para leitura do banco de dados sem filtro
+    DBtoPLC 		: ARRAY [0..10] OF ST_Database;						//Dados recebidos do banco de dados
+    ColumnNamesRead :  ARRAY[0..8] OF STRING(50);						//Lista com os nomes das colunas do banco de dados
+    tcMessage      	: I_TcMessage;										//Estrutura para diagnosticos
+	bReadStruct 	: BOOL ;											//Comando para ler banco de dados sem filtro
+	sMenssageError1 	: STRING ; 										//Mensagem de erro
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+(* Nome das colunas / Columns Name *)
+ColumnNamesRead[0] := 'ID' ;
+ColumnNamesRead[1] := 'Timestamp';
+ColumnNamesRead[2] := 'recipe';
+ColumnNamesRead[3] := 'parameter1';
+ColumnNamesRead[4] := 'parameter2';
+ColumnNamesRead[5] := 'parameter3';
+ColumnNamesRead[6] := 'parameter4';
+ColumnNamesRead[7] := 'parameter5';
+ColumnNamesRead[8] := 'parameter6';
+
+(* Parametro: nome da receita a ser retornada*)
+(* Parameter: name of the recipe to be returned*)
+
+stParametros[0].sParaName := 'sReceita';
+stParametros[0].eParaType := E_ExpParameterType.STRING_;
+stParametros[0].nParaSize := SIZEOF(sReceita);
+
+//////////////////// Comando SELECT////////////////////////
+
+sCommandSql := 'SELECT ID, Timestamp, recipe, parameter1, parameter2, parameter3, parameter4, parameter5, parameter6 FROM TB_PLCMODE  WHERE recipe = {sReceita}';
+   
+IF bCommandSelect THEN			    
+			   
+	IF fbPLCDBCmd.ExecuteDataReturn(
+		hDBID:= hDBID, 
+		pExpression:= ADR(sCommandSql), 
+		cbExpression:= SIZEOF(sCommandSql), 
+		pData:= ADR(sReceita), 
+		cbData:= SIZEOF(sReceita), 
+		pParameter:= ADR(stParametros), 
+		cbParameter:= SIZEOF(stParametros),
+		nStartIndex:= 0, 
+		nRecordCount:= 1, 
+		pReturnData:= ADR(DBToData), 
+		cbReturnData:= SIZEOF(DBToData), 
+		pRecords:= ADR(nRecords)) 
+	THEN
+		 //Se nao estiver em erro ou ocupado desliga o bit
+		IF fbPLCDBCmd.bError THEN
+			sMenssageError := 'ERROR'; 
+			bCommandSelect := FALSE ;			
+		ELSE
+			sMenssageError := 'OK'; 
+			bCommandSelect := FALSE ;			
+		END_IF
+	END_IF
+END_IF
+	
+		
+	
+(*****************************************************************************************************)	
+(* FB para ler as 100 primeiras linhas da tabela *)
+(*FB to read the first 100 rows of the table*)
+	
+IF bReadStruct THEN	 
+	IF fbPLCDBRead.ReadStruct(
+		hDBID:= 1, 
+		sTableName:= 'TB_Recipes', 
+		pColumnNames:= ADR(ColumnNamesRead), 
+		cbColumnNames:= SIZEOF(ColumnNamesRead), 
+		sOrderByColumn:= ColumnNamesRead[0], 
+		eOrderType:= E_OrderType.ASC, 
+		nStartIndex:= 0, 
+		nRecordCount:= 100, 
+		pData:= ADR(DBtoPLC), 
+		cbData:= SIZEOF(DBtoPLC))
+THEN
+		IF fbPLCDBRead.bError THEN
+			tcMessage:= fbPLCDBRead.ipTcResult;
+			sMenssageError1 := 'ERROR'; 
+			bReadStruct := FALSE ;			
+		ELSE
+			sMenssageError1 := 'OK'; 
+			bReadStruct := FALSE ;
+		END_IF
+	END_IF	
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

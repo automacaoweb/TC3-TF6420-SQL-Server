@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_Database" Id="{f6f76f8c-714c-426a-b9ef-eb63e9856fd1}">
+    <Declaration><![CDATA[TYPE ST_Database :
+STRUCT
+	ID : T_ULARGE_INTEGER  ;	//IDENTITY
+	Timestamp : DATE_AND_TIME ;	//TIMESTAMP
+	recipe : STRING(51) ;		//NAME OF RECIPE
+	parameter1 : LREAL ;		//PARAMETER 1
+	parameter2 : LREAL ;		//PARAMETER 2
+	parameter3 : LREAL ;		//PARAMETER 3
+	parameter4 : LREAL ;		//PARAMETER 4
+	parameter5 : LREAL ;		//PARAMETER 5
+	parameter6 : LREAL ;		//PARAMETER 6
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_SQLMode_ExecuteCommandWithData" Id="{74584bf1-55a4-4104-81df-d17cf35ad8f7}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_SQLMode_ExecuteCommandWithData
+VAR_INPUT
+	bExecute : BOOL ;
+	hDBID : UINT ;
+	sCommandSql : STRING(512) ;
+END_VAR
+VAR_OUTPUT
+	bCommandOk : BOOL ;
+	sError : STRING ;
+    aReadStruct : ARRAY[1..10] OF ST_Database;	
+END_VAR
+VAR
+    fbSqlDatabase : FB_SQLDatabaseEvt(sNetID := '', tTimeout := T#5S);
+	fbSqlCommand : FB_SQLCommandEvt(sNetID := '', tTimeout := T#180S) ;
+    tcMessage    : I_TcMessage;	
+    fbSqlResult : FB_SQLResultEvt(sNetID:='', tTimeout    := T#5S); 	
+	nState : INT ;
+	fbPulse : R_TRIG ;
+
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbPulse(CLK:= bExecute, Q=> );
+
+
+IF fbPulse.Q THEN
+	nState := 1;		
+END_IF
+
+CASE nState OF
+		
+	0: //IDLE;
+	
+	
+	1: 
+	fbSqlResult.Release();
+	nState := 10;	 
+	sError := '' ;	
+	
+	10:
+	
+		// open connection
+		IF fbSqlDatabase.Connect(1) THEN
+			IF fbSqlDatabase.bError THEN
+				nState := 210; 
+			ELSE
+				nState := 20; 
+			END_IF
+		END_IF
+	
+	20:
+	
+		IF fbSqlDatabase.CreateCmd(ADR(fbSqlCommand)) THEN
+			IF fbSqlDatabase.bError THEN
+				nState := 220; 			
+			ELSE
+				nState := 30; 
+			END_IF
+		END_IF	
+		
+	30: //EXECUTA COMANDO
+	
+		IF fbSQLCommand.ExecuteDataReturn(ADR(sCommandSql), SIZEOF(sCommandSql), ADR(fbSqlResult)) THEN
+			IF fbSQLCommand.bError THEN
+				nState := 230; 				
+			ELSE
+				tcMessage := fbSQLCommand.ipTcResult;
+				nState := 40; 
+			END_IF
+		END_IF
+	
+	40:
+		IF fbSqlResult.Read(2, 3, ADR(aReadStruct), SIZEOF(aReadStruct), FALSE, TRUE) THEN
+			IF fbSqlResult.bError THEN
+				nState := 240; 
+			ELSE
+				nState := 50; 
+			END_IF
+		END_IF
+	
+	50:
+		fbSqlResult.Release();
+			IF fbSqlResult.bError THEN
+				nState := 250; 
+			ELSE
+				nState := 60; 
+				sError := 'Dados lidos com sucesso' ;				
+			END_IF
+	
+		
+	60:
+		IF fbSqlDatabase.Disconnect() THEN
+			IF fbSqlDatabase.bError THEN
+				nState := 255;
+			ELSE
+				nState := 0;
+			END_IF
+		END_IF
+		
+	210 : 
+		sError := 'Erro ao conectar ao banco' ;
+		nState := 0;		
+
+	220 : 
+		sError := 'Erro ao criar comando' ;	
+		nState := 0;	
+		
+	230: 
+		sError := 'Erro ao executar comando' ;	
+		nState := 0;	
+		
+	240: 
+		sError := 'Erro passo 40' ;			
+		nState := 0;	
+		
+	250:
+		sError := 'Erro ao executar o Release' ;		
+		nState := 0;	
+		
+	260: 				
+		sError := 'Erro ao desconectar' ;	
+		nState := 0;	
+			
+END_CASE
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

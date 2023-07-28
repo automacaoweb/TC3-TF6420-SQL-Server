@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PRG_WriteDatabase" Id="{fc16a8ad-f179-40ad-b9e0-ea89da21bdad}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_WriteDatabase
+VAR
+	hDBID: UDINT := 1 ;							//DB ID
+    sTableName: T_MaxString := 'TB_PLCMODE' ;	//NOME DA TABELA / TABLE NAME / NOMBRE DA TABLA
+
+//ESCREVER NO BANCO DE DADOS / WRITE DO DATABASE / ESCRIBIR EN LA BASE DE DATOS 
+    fbPLCDBWrite    :	FB_PLCDBWriteEvt(sNetID := '', tTimeout := T#5S);//
+    DataToDB 		:	ST_Database;									 //ESTRUTURA A ESCRITA NO BANCO / STRUCT TO SEND TO DATABASE
+    ColumnNames     :	ARRAY[0..8] OF STRING(50);						 //ESTRUTURA COM O NOME DAS COLUNAS / STRUCT WITH COLLUNS NAME
+    systime         :	GETSYSTEMTIME;									 //DATA E HORA DO  SISTEMA / DATE TIME OF SYSTEM
+    currentTime     :	T_FILETIME;										 //
+    tcMessage_Write :	I_TcMessage;									 //
+	
+	bWriteValues : BOOL ;	
+	sMessage : STRING ;
+	iRecipeNumerForTest : INT ;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//NOME DAS COLUNAS DA TABELA / NAME OF THE TABLE COLUMNS/
+ColumnNames[0] := 'ID';
+ColumnNames[1] := 'Timestamp';
+ColumnNames[2] := 'recipe';
+ColumnNames[3] := 'parameter1';
+ColumnNames[4] := 'parameter2';
+ColumnNames[5] := 'parameter3';
+ColumnNames[6] := 'parameter4';
+ColumnNames[7] := 'parameter5';
+ColumnNames[8] := 'parameter6';
+
+(* Logica de teste apenas para gerar dados para gravar no banco *)
+
+systime(timeLoDw => currentTime.dwLowDateTime, timeHiDW => currentTime.dwHighDateTime );
+
+
+(* SIMULATE VALUES TO WRITE TO DATABASE *)
+IF bWriteValues THEN
+	
+//Simulacao de valores 
+	DataToDB.Timestamp  := FILETIME_TO_DT(currentTime);;
+	DataToDB.recipe     := CONCAT ('recipe', TO_STRING(iRecipeNumerForTest)) ;
+	DataToDB.parameter1 := DataToDB.parameter1 + 10;
+	DataToDB.parameter2 := DataToDB.parameter2 + 10;
+	DataToDB.parameter3	:= DataToDB.parameter3 + 10 ;
+	DataToDB.parameter4 := DataToDB.parameter4 + 10 ;
+	DataToDB.parameter5 := DataToDB.parameter5 + 10 ;
+	DataToDB.parameter6 := DataToDB.parameter6 + 10 ;
+
+	
+END_IF
+	
+/////////////////////////////// Chamada da função de escrita
+IF bWriteValues THEN
+	IF fbPLCDBWrite.WriteStruct(
+		hDBID:= hDBID, 
+		sTableName:= sTableName, 
+		pRecord:= ADR(DataToDB), 
+		cbRecord:= SIZEOF(DataToDB), 
+		pColumnNames:= ADR(ColumnNames) , 
+		cbColumnNames:= SIZEOF(ColumnNames))
+	THEN
+		IF fbPLCDBWrite.bError THEN
+			tcMessage_Write := fbPLCDBWrite.ipTcResult;
+			sMessage := 'ERROR';
+			bWriteValues := FALSE ;	 
+		ELSE
+			sMessage := 'OK';
+			bWriteValues := FALSE ;	 
+		END_IF
+	END_IF
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PRG_DeleteRowDatabase" Id="{80134a66-fc81-4c91-bdc0-42c1ae9c95c7}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_DeleteRowDatabase
+VAR
+//Variáveis gerais
+	hDBID: UDINT := 1 ;						//DB ID - Ver banco no database server
+    sTableName: T_MaxString := 'TB_PLCMODE' ;	//Nome da Tabela
+
+//Deletar dados na tabela
+    fbPLCDBCmd		: FB_PLCDBCmdEvt(sNetID := '', tTimeout := T#5S);
+    DataToDB		: ST_Database;										//Dados do PLC a serem gravados no banco (ver pasta DUT)
+    ColumnNames     : ARRAY[0..8] OF STRING(50);						//Estrutura com o nome das colunas da tabela
+    sCommandDelete  : STRING (1000);									// 	
+    stParametros 	: ARRAY [1..1] OF ST_ExpParameter; 					//Parametros usado no filtro SQL
+    sReceita 		: STRING(80) := 'Receita10'; 						//Parametros usado no filtro SQL		
+	bDeletarDados 	: BOOL ;											//	
+	sMensagemErroEscrita	: STRING ;									//
+    tcMessageDelete			: I_TcMessage;								//
+	nRecords         		: UDINT;									//
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(***************************** CODIGO PARA DELETAR UMA LINHA DO BANCO DE DADOS***************************************)
+
+(* Parametro que será passado juntamente no comando de DELETE informando a linha a ser deletada*)
+(* A variável sReceita é uma STRING que deverá conter o nome da receita a ser deletada. *)
+stParametros[1].sParaName := 'sReceita';
+stParametros[1].eParaType := E_ExpParameterType.STRING_;
+stParametros[1].nParaSize := SIZEOF(sReceita);
+
+
+(* Comando SQL para deletar uma linha. Neste comando passamos a variável sReceita como parametro *)
+ sCommandDelete := 'DELETE FROM TB_PLCMODE WHERE recipe = {sReceita} ' ;
+ 
+ 
+(* Executa comando para deletar linha do banco de dados. Ativar o booleano bDeletar Dados *) 
+IF bDeletarDados THEN
+
+	IF fbPLCDBCmd.Execute(
+		hDBID:= 1,
+		pExpression:= ADR(sCommandDelete),
+		cbExpression:= SIZEOF(sCommandDelete),
+		pData:= ADR(sReceita),
+		cbData:= SIZEOF(sReceita),
+		pParameter:= ADR(stParametros),
+		cbParameter:= SIZEOF(stParametros))
+				
+	THEN
+	
+		IF fbPLCDBCmd.bError THEN
+			sMensagemErroEscrita := 'Erro no comando de DELETE';
+			bDeletarDados := FALSE ;			
+			tcMessageDelete := fbPLCDBCmd.ipTcResult;
+		ELSE
+			sMensagemErroEscrita := 'Receita deletada com sucesso';
+			bDeletarDados := FALSE ;
+		END_IF
+	END_IF
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

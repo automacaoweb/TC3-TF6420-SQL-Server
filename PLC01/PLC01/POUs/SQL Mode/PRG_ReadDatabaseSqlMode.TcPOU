@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PRG_ReadDatabaseSqlMode" Id="{96227e39-5e32-40eb-b4fc-987e17ccd6d7}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_ReadDatabaseSqlMode
+VAR
+(* LER DO BANCO / READ FROM DATABASE / LEER DATABASE *)	
+	fbReadSqlMode : FB_SQLMode_ExecuteCommandWithData ;
+	bReadDatabase : BOOL ;	
+	bWriteOk : BOOL ;	
+	sSqlCmdReadTable : STRING(512) ;	
+	sError : STRING ;
+    aReadStruct : ARRAY[1..10] OF ST_Database;	
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[sSqlCmdReadTable :='SELECT [ID], [Timestamp], [recipe], [parameter1], [parameter2], [parameter3], [parameter4], [parameter5], [parameter6] FROM [dbo].[TB_SQLMODE] ';
+
+fbReadSqlMode(
+	bExecute:= bReadDatabase, 
+	hDBID:= 1, 
+	sCommandSql:= sSqlCmdReadTable, 
+	bCommandOk=> , 
+	sError=> sError, 
+	aReadStruct=> aReadStruct);	]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
