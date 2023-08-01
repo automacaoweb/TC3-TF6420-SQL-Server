@@ -24,24 +24,21 @@ END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[fbPulse(CLK:= bExecute, Q=> );
 
-
 IF fbPulse.Q THEN
 	nState := 1;		
 END_IF
 
 CASE nState OF
 		
-	0: //IDLE;
+	0: ; //PARADO / IDLE / INTERRUMPIDO
+		
+	1: //LIMPA O BUFFER / CLEAN BUFFER / LIMPIA EL BUFFER
+		fbSqlResult.Release();
+		nState := 10;	 
+		sError := '' ;	
 	
+	10: //ABRIR CONEXAO / OPEN CONECTION / CONEXION ABIERTA
 	
-	1: 
-	fbSqlResult.Release();
-	nState := 10;	 
-	sError := '' ;	
-	
-	10:
-	
-		// open connection
 		IF fbSqlDatabase.Connect(1) THEN
 			IF fbSqlDatabase.bError THEN
 				nState := 210; 
@@ -50,7 +47,7 @@ CASE nState OF
 			END_IF
 		END_IF
 	
-	20:
+	20: //CRIAR COMANDO / CREATE COMMAND / CREAR COMANDO
 	
 		IF fbSqlDatabase.CreateCmd(ADR(fbSqlCommand)) THEN
 			IF fbSqlDatabase.bError THEN
@@ -60,7 +57,7 @@ CASE nState OF
 			END_IF
 		END_IF	
 		
-	30: //EXECUTA COMANDO
+	30: //EXECUTA COMANDO / EXCUTE COMMAND / EJECUTAR COMANDO
 	
 		IF fbSQLCommand.ExecuteDataReturn(ADR(sCommandSql), SIZEOF(sCommandSql), ADR(fbSqlResult)) THEN
 			IF fbSQLCommand.bError THEN
@@ -71,7 +68,7 @@ CASE nState OF
 			END_IF
 		END_IF
 	
-	40:
+	40: //RECEBE OS DADOS / RECEIVE DATA / RECIBIR LOS DATOS
 		IF fbSqlResult.Read(2, 3, ADR(aReadStruct), SIZEOF(aReadStruct), FALSE, TRUE) THEN
 			IF fbSqlResult.bError THEN
 				nState := 240; 
@@ -80,13 +77,13 @@ CASE nState OF
 			END_IF
 		END_IF
 	
-	50:
+	50: 
 		fbSqlResult.Release();
 			IF fbSqlResult.bError THEN
 				nState := 250; 
 			ELSE
 				nState := 60; 
-				sError := 'Dados lidos com sucesso' ;				
+				sError := 'OK' ;				
 			END_IF
 	
 		
@@ -100,28 +97,28 @@ CASE nState OF
 		END_IF
 		
 	210 : 
-		sError := 'Erro ao conectar ao banco' ;
-		nState := 0;		
+		sError := 'Error Connect' ;
+		nState := 60;		
 
 	220 : 
-		sError := 'Erro ao criar comando' ;	
-		nState := 0;	
+		sError := 'Error Create Command' ;	
+		nState := 60;	
 		
 	230: 
-		sError := 'Erro ao executar comando' ;	
-		nState := 0;	
+		sError := 'Error Execute Command' ;	
+		nState := 60;	
 		
 	240: 
-		sError := 'Erro passo 40' ;			
-		nState := 0;	
+		sError := 'Error Read' ;			
+		nState := 60;	
 		
 	250:
-		sError := 'Erro ao executar o Release' ;		
-		nState := 0;	
+		sError := 'Error Release' ;		
+		nState := 60;	
 		
 	260: 				
-		sError := 'Erro ao desconectar' ;	
-		nState := 0;	
+		sError := 'Error Disconect' ;	
+		nState := 60;	
 			
 END_CASE
 ]]></ST>

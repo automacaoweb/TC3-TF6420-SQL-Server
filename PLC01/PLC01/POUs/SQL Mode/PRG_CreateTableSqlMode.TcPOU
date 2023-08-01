@@ -14,7 +14,9 @@ END_VAR
     <Implementation>
       <ST><![CDATA[(***************** CRIAR TABELA / CREATE TABLE / CREAR TABLA **********************)
 
-sSqlCmdCreateTable := 'CREATE TABLE [TB_SQLMODE] ([ID] bigint IDENTITY(1,1), [Timestamp] datetime, [recipe] varchar(50), [parameter1] float, [parameter2] float, [parameter3] float, [parameter4] float, [parameter5] float, [parameter6] float)';
+sSqlCmdCreateTable := 'CREATE TABLE [TB_SQLMODE] ([ID] bigint IDENTITY(1,1), [Timestamp] datetime,
+[recipe] varchar(50), [parameter1] float, [parameter2] float, [parameter3] float, [parameter4] float,
+[parameter5] float, [parameter6] float)';
 
 fbCreateTable(bExecute:= bCreateDatabase, 
 			  hDBID:= 1, 
