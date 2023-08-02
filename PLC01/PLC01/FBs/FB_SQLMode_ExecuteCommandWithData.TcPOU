@@ -14,12 +14,12 @@ VAR_OUTPUT
 END_VAR
 VAR
     fbSqlDatabase : FB_SQLDatabaseEvt(sNetID := '', tTimeout := T#5S);
-	fbSqlCommand : FB_SQLCommandEvt(sNetID := '', tTimeout := T#180S) ;
+	fbSqlCommand : FB_SQLCommandEvt(sNetID := '', tTimeout := T#30S) ;
     tcMessage    : I_TcMessage;	
-    fbSqlResult : FB_SQLResultEvt(sNetID:='', tTimeout    := T#5S); 	
+    fbSqlResult : FB_SQLResultEvt(sNetID:='', tTimeout    := T#30S); 	
 	nState : INT ;
 	fbPulse : R_TRIG ;
-
+teste : INT ;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[fbPulse(CLK:= bExecute, Q=> );
@@ -67,15 +67,27 @@ CASE nState OF
 				nState := 40; 
 			END_IF
 		END_IF
-	
+		
+	31 : 
+			
+				nState := 40 ;		
+				
 	40: //RECEBE OS DADOS / RECEIVE DATA / RECIBIR LOS DATOS
-		IF fbSqlResult.Read(2, 3, ADR(aReadStruct), SIZEOF(aReadStruct), FALSE, TRUE) THEN
-			IF fbSqlResult.bError THEN
-				nState := 240; 
-			ELSE
-				nState := 50; 
-			END_IF
+		IF 	fbSqlResult.Read(nStartIndex:= 1,nRecordCount:= 10, 
+				pData:= ADR(aReadStruct), cbData:= SIZEOF(aReadStruct), 
+				bWithVerifying:= FALSE, bDataRelease:= TRUE) THEN
+		
+;
 		END_IF
+
+				
+			IF fbSqlResult.bError THEN
+				nState := 240 ;
+			ELSIF fbSqlResult.bBusy = TRUE THEN
+				nState := 31 ;	
+			ELSIF fbSqlResult.bBusy = FALSE THEN
+					nState := 50; 
+			END_IF
 	
 	50: 
 		fbSqlResult.Release();

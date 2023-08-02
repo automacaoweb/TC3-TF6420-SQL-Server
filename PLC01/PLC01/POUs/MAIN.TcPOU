@@ -6,7 +6,7 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[PLC_Mode();
+      <ST><![CDATA[PLC_Mode() ;
 
 SQL_Mode();]]></ST>
     </Implementation>
