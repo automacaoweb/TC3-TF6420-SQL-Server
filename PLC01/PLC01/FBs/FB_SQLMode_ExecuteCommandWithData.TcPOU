@@ -14,12 +14,13 @@ VAR_OUTPUT
 END_VAR
 VAR
     fbSqlDatabase : FB_SQLDatabaseEvt(sNetID := '', tTimeout := T#5S);
-	fbSqlCommand : FB_SQLCommandEvt(sNetID := '', tTimeout := T#30S) ;
+	fbSqlCommand : FB_SQLCommandEvt(sNetID := '', tTimeout := T#5S) ;
     tcMessage    : I_TcMessage;	
-    fbSqlResult : FB_SQLResultEvt(sNetID:='', tTimeout    := T#30S); 	
+    fbSqlResult : FB_SQLResultEvt(sNetID:='', tTimeout    := T#5S); 	
 	nState : INT ;
 	fbPulse : R_TRIG ;
-teste : INT ;
+	bSqlResult : BOOL ;
+	rParameter_old : REAL ;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[fbPulse(CLK:= bExecute, Q=> );
@@ -32,14 +33,22 @@ CASE nState OF
 		
 	0: ; //PARADO / IDLE / INTERRUMPIDO
 		
-	1: //LIMPA O BUFFER / CLEAN BUFFER / LIMPIA EL BUFFER
-		fbSqlResult.Release();
-		nState := 10;	 
+	1: //INICIALIZA VARIAVEIS / START VARIABLES /  INICIALIZAR VARIABLES
+		bCommandOk := FALSE ;
 		sError := '' ;	
+		rParameter_old := 0 ;			
+
+		IF fbSqlDatabase.Disconnect() THEN
+			IF fbSqlDatabase.bError THEN
+				nState := 255;
+			ELSE
+				nState := 10;
+			END_IF
+		END_IF
 	
 	10: //ABRIR CONEXAO / OPEN CONECTION / CONEXION ABIERTA
 	
-		IF fbSqlDatabase.Connect(1) THEN
+		IF fbSqlDatabase.Connect(hDBID:= hDBID) THEN
 			IF fbSqlDatabase.bError THEN
 				nState := 210; 
 			ELSE
@@ -59,67 +68,65 @@ CASE nState OF
 		
 	30: //EXECUTA COMANDO / EXCUTE COMMAND / EJECUTAR COMANDO
 	
-		IF fbSQLCommand.ExecuteDataReturn(ADR(sCommandSql), SIZEOF(sCommandSql), ADR(fbSqlResult)) THEN
+		IF fbSqlCommand.ExecuteDataReturn(pSQLCmd:= ADR(sCommandSql), cbSQLCmd:= SIZEOF(sCommandSql), pSQLDBResult:= ADR(fbSqlResult)) THEN
 			IF fbSQLCommand.bError THEN
 				nState := 230; 				
-			ELSE
 				tcMessage := fbSQLCommand.ipTcResult;
+			ELSE
 				nState := 40; 
 			END_IF
 		END_IF
-		
-	31 : 
-			
-				nState := 40 ;		
+				
 				
 	40: //RECEBE OS DADOS / RECEIVE DATA / RECIBIR LOS DATOS
-		IF 	fbSqlResult.Read(nStartIndex:= 1,nRecordCount:= 10, 
-				pData:= ADR(aReadStruct), cbData:= SIZEOF(aReadStruct), 
-				bWithVerifying:= FALSE, bDataRelease:= TRUE) THEN
-		
-;
-		END_IF
+		bSqlResult := 	fbSqlResult.Read(nStartIndex:= 1,nRecordCount:= 10, pData:= ADR(aReadStruct), cbData:= SIZEOF(aReadStruct), bWithVerifying:= FALSE, bDataRelease:= TRUE) ;
 
-				
-			IF fbSqlResult.bError THEN
-				nState := 240 ;
-			ELSIF fbSqlResult.bBusy = TRUE THEN
-				nState := 31 ;	
-			ELSIF fbSqlResult.bBusy = FALSE THEN
-					nState := 50; 
-			END_IF
+		IF fbSqlResult.bError THEN
+			nState := 240 ;
+		ELSE
+			nState := 50; 
+		END_IF		
+
 	
-	50: 
+	50: //EXTRAI OS VALORES DO BUFFER / EXTRACT DATA FROM BUFFER
 		fbSqlResult.Release();
 			IF fbSqlResult.bError THEN
 				nState := 250; 
 			ELSE
-				nState := 60; 
-				sError := 'OK' ;				
+				nState := 55; 
+				sError := 'OK' ;
+				bCommandOk := TRUE ;				
 			END_IF
-	
-		
-	60:
+			
+	55: //VERIFICA SE FORAM RETORNADOS DADOS / CHECK DATA RETURN		
+		IF aReadStruct[1].parameter1 <>	rParameter_old THEN
+			rParameter_old := aReadStruct[1].parameter1 ;
+			nState := 60;
+		ELSE
+			nState := 20; 			 			
+		END_IF
+			
+	60: //DESCONECTAR DO BANCO / DATABASE DISCONECT
 		IF fbSqlDatabase.Disconnect() THEN
 			IF fbSqlDatabase.bError THEN
 				nState := 255;
 			ELSE
-				nState := 0;
+				nState := 0;			
 			END_IF
 		END_IF
 		
 	210 : 
 		sError := 'Error Connect' ;
 		nState := 60;		
-
+		bCommandOk := FALSE ;	
 	220 : 
 		sError := 'Error Create Command' ;	
 		nState := 60;	
-		
+		bCommandOk := FALSE ;			
 	230: 
 		sError := 'Error Execute Command' ;	
 		nState := 60;	
-		
+		bCommandOk := FALSE ;			
 	240: 
 		sError := 'Error Read' ;			
 		nState := 60;	
@@ -127,11 +134,11 @@ CASE nState OF
 	250:
 		sError := 'Error Release' ;		
 		nState := 60;	
-		
+		bCommandOk := FALSE ;			
 	260: 				
 		sError := 'Error Disconect' ;	
 		nState := 60;	
-			
+		bCommandOk := FALSE ;				
 END_CASE
 ]]></ST>
     </Implementation>

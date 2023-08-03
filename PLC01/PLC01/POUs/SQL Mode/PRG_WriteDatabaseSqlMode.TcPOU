@@ -9,17 +9,97 @@ VAR
 	bWriteOk : BOOL ;	
 	sSqlCmdWriteTable : STRING(512) ;	
 	sError : STRING ;	
+	
+    systime     : GETSYSTEMTIME; //DATA E HORA DO  SISTEMA / DATE TIME OF SYSTEM	
+    currentTime : T_FILETIME;	 //	
+	sTimestamp : STRING ;
+	sRecipeName : STRING ;
+	sParameter1 : STRING ;
+	sParameter2 : STRING ;
+	sParameter3 : STRING ;
+	sParameter4 : STRING ;
+	sParameter5 : STRING ;
+	sParameter6 : STRING ;	
+	
+	dtTimestamp : DATE_AND_TIME;
+	iRecipeNumerForTest : INT ;
+	rParameter1 : REAL ;
+	rParameter2 : REAL ;
+	rParameter3 : REAL ;
+	rParameter4 : REAL ;
+	rParameter5 : REAL ;
+	rParameter6 : REAL ;	
+	
+	fbPulse : F_TRIG ;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[sSqlCmdWriteTable := 'INSERT INTO [dbo].[TB_SQLMODE] ( [Timestamp], [recipe], [parameter1], [parameter2], [parameter3], [parameter4], [parameter5], [parameter6]) VALUES ( $'2023-07-26 15:41:02$', $'recipe3$', 1.3, 2.3, 3.3, 4.3, 5.3, 6.3) ';
+      <ST><![CDATA[
+//SIMULA VALORES
+systime(timeLoDw => currentTime.dwLowDateTime, timeHiDW => currentTime.dwHighDateTime );
 
+fbPulse(CLK:= bWriteDatabase, Q=> );
+
+IF fbPulse.Q THEN
+	dtTimestamp  := fILETIME_TO_DT(currentTime);
+	iRecipeNumerForTest := iRecipeNumerForTest + 1 ;
+	rParameter1 := rParameter1 + 10;
+	rParameter2 := rParameter2 + 10;
+	rParameter3	:= rParameter3 + 10;
+	rParameter4 := rParameter4 + 10;
+	rParameter5 := rParameter5 + 10;
+	rParameter6 := rParameter6 + 10;
+
+END_IF
+
+//CONVERTE NUMEROS SIMULADOS PARA STRING / CONVERT SIMULATE VALUES TO STRING
+	sTimestamp  := TO_STRING(dtTimestamp);
+	sRecipeName := CONCAT ('recipe', TO_STRING(iRecipeNumerForTest)) ;
+	sParameter1 := TO_STRING(rParameter1);
+	sParameter2 := TO_STRING(rParameter2);
+	sParameter3	:= TO_STRING(rParameter3);
+	sParameter4 := TO_STRING(rParameter4);
+	sParameter5 := TO_STRING(rParameter5);
+	sParameter6 := TO_STRING(rParameter6);
+
+
+
+
+//COMANDO SQL / SQL COMMAND / 
+
+sTimestamp := DELETE(sTimestamp, 3, 1) ; 
+sTimestamp := REPLACE(sTimestamp, ' ', 1, 11) ; 
+sSqlCmdWriteTable := CONCAT ('INSERT INTO [dbo].[TB_SQLMODE] ( [Timestamp], [recipe], [parameter1], [parameter2], [parameter3], [parameter4], [parameter5], [parameter6]) VALUES ( $'', sTimestamp) ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, '$', $'') ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, sRecipeName) ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, '$' , ') ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, sParameter1) ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, ', ') ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, sParameter2) ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, ', ') ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, sParameter3) ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, ', ') ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, sParameter4) ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, ', ') ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, sParameter5) ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, ', ') ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, sParameter6) ;
+sSqlCmdWriteTable := CONCAT (sSqlCmdWriteTable, ' )') ;
+
+//sSqlCmdWriteTable := 'INSERT INTO [dbo].[TB_SQLMODE] ( [Timestamp], [recipe], [parameter1], [parameter2], [parameter3], [parameter4], [parameter5], [parameter6]) VALUES ( $'2023-07-26 15:41:02$', $'recipe3$', 1.3, 2.3, 3.3, 4.3, 5.3, 6.3) ';
+
+
+// FUNCTION BLOCK TO WRITE
 fbWriteSqlMode(
 	bExecute:= bWriteDatabase, 
 	hDBID:= 1, 
 	sCommandSql:= sSqlCmdWriteTable, 
 	bCommandOk=> bWriteOk, 
-	sError=> sError );]]></ST>
+	sError=> sError );
+	
+IF fbWriteSqlMode.bCommandOk THEN
+	bWriteDatabase := FALSE ;
+END_IF]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

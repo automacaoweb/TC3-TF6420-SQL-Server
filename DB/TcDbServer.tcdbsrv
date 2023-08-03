@@ -6,7 +6,7 @@
   <LogMaxLength>10</LogMaxLength>
   <Impersonate>False</Impersonate>
   <DBNULLAllowed>True</DBNULLAllowed>
-  <DBCommandTimeout>30</DBCommandTimeout>
+  <DBCommandTimeout>5</DBCommandTimeout>
   <DBConnectionTimeout>15</DBConnectionTimeout>
   <MaxByteArrayLength>256</MaxByteArrayLength>
   <MaxStringLength>256</MaxStringLength>
