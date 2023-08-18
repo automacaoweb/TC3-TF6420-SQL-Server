@@ -4,7 +4,7 @@
     <Declaration><![CDATA[PROGRAM PRG_CreateTableSqlMode
 VAR
 (* CRIAR TABELA / CREATE TABLE / CREAR TABLA *)	
-	fbCreateTable : FB_SQLMode_ExecuteComandWithoutReturn ;
+	fbCreateTable : FB_SQLMode_ExecuteComandWithoutData ;
 	bCreateDatabase : BOOL ;
 	bDatabaseCreated : BOOL ;
 	sSqlCmdCreateTable : STRING(512) ;

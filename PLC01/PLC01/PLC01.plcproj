@@ -23,7 +23,13 @@
     <Compile Include="FBs\FB_SQLMode_ExecuteCommandWithData.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FBs\FB_SQLMode_ExecuteComandWithoutReturn.TcPOU">
+    <Compile Include="FBs\FB_SQLMode_ExecuteComandWithoutData.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FBs\FB_SQLMode_ExecuteStoredProcedureWithoutData.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FBs\FB_SQLMode_ExecuteStoredProcedureWithData.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PlcTask.TcTTO">

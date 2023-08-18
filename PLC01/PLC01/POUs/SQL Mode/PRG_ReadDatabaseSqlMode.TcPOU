@@ -24,7 +24,8 @@ fbReadSqlMode(
 	sCommandSql:= sSqlCmdReadTable, 
 	bCommandOk=> , 
 	sError=> sError, 
-	aReadStruct=> aReadStruct);	]]></ST>
+	aReadStruct=> aReadStruct);	
+	]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

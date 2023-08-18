@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_SQLMode_ExecuteStoredProcedureWithoutData" Id="{059e6593-ab16-43c9-8c97-0b417d2d8d7f}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_SQLMode_ExecuteStoredProcedureWithoutData
+VAR_INPUT
+	bExecute : BOOL ;
+	hDBID : UINT ;
+	sCommandSql : STRING(512) ;	
+END_VAR
+VAR_OUTPUT
+	bCommandOk : BOOL ;
+	sError : STRING ;	
+END_VAR
+VAR
+	fbSqlDatabase : FB_SQLDatabaseEvt(sNetID := '', tTimeout := T#5S);	
+    fbSQLStoredProcedure : FB_SQLStoredProcedureEvt(sNetID:='', tTimeout    := T#5S);	
+    ParaInfo        : ST_SQLSPParameter; 
+	
+    tcMessage    : I_TcMessage;	
+	nState : INT ;
+	fbPulse : R_TRIG ;	
+	ID: BYTE;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbPulse(CLK:= bExecute, Q=> );
+
+IF fbPulse.Q THEN
+	nState := 1 ;
+END_IF
+
+CASE nState OF
+		
+	0: (* Iddle *)
+	;
+	
+	1:
+	bCommandOk := FALSE ;
+	sError := '';
+	nState := 10; 
+	
+	10: (* Connect to Database *)
+	
+	IF fbSqlDatabase.Connect(hDBID) THEN
+		IF fbSqlDatabase.bError THEN
+			nState := 250; 
+        	tcMessage := fbSqlDatabase.ipTcResult;			
+		ELSE
+			nState := 20; 
+		END_IF
+	END_IF
+	
+	20:	(* Create Command *)
+	ParaInfo.sParameterName     := '@Customer_ID';
+	ParaInfo.eParameterType     := E_SPParameterType.Input;
+	ParaInfo.eParameterDataType := E_ColumnType.BigInt;
+	ParaInfo.nParameterSize     := 8;
+	
+	IF fbSQLDatabase.CreateSP('dbo.SP_GetCustomerPositions', ADR(ParaInfo), SIZEOF(ParaInfo), ADR(fbSQLStoredProcedure)) THEN
+		IF fbSQLDatabase.bError THEN
+			nState:=255;
+		ELSE
+			nState:= nState+1;
+		END_IF
+	END_IF
+	
+	
+	
+	30:
+	
+	IF fbSQLStoredProcedure.Execute(pParameterStrc := ADR(ID) , cbParameterStrc:= SIZEOF(ID)) THEN
+		IF fbSQLStoredProcedure.bError THEN
+			tcMessage := fbSQLStoredProcedure.ipTcResult;
+			nState := 255;
+		ELSE
+			nState := nState+1;
+		END_IF
+	END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

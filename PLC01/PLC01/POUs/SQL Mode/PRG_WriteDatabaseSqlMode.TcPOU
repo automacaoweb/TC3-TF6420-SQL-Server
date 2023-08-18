@@ -4,7 +4,7 @@
     <Declaration><![CDATA[PROGRAM PRG_WriteDatabaseSqlMode
 VAR
 (* ESCREVER NO BANCO / WRITE TO DATABASE / ESCRIBIR EN LA DATABASE *)	
-	fbWriteSqlMode : FB_SQLMode_ExecuteComandWithoutReturn ;
+	fbWriteSqlMode : FB_SQLMode_ExecuteComandWithoutData ;
 	bWriteDatabase : BOOL ;	
 	bWriteOk : BOOL ;	
 	sSqlCmdWriteTable : STRING(512) ;	

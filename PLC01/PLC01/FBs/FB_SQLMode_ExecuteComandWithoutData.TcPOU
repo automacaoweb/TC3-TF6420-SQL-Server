@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="FB_SQLMode_ExecuteComandWithoutReturn" Id="{30d91114-26a6-4bd5-badc-cd3279717f8d}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_SQLMode_ExecuteComandWithoutReturn
+  <POU Name="FB_SQLMode_ExecuteComandWithoutData" Id="{30d91114-26a6-4bd5-badc-cd3279717f8d}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_SQLMode_ExecuteComandWithoutData
 VAR_INPUT
 	bExecute : BOOL ;
 	hDBID : UINT ;
@@ -12,8 +12,8 @@ VAR_OUTPUT
 	sError : STRING ;
 END_VAR
 VAR
-	fbSqlDatabase : FB_SQLDatabaseEvt(sNetID := '', tTimeout := T#10S);
-	fbSqlCommand : FB_SQLCommandEvt(sNetID := '', tTimeout := T#180S) ;
+	fbSqlDatabase : FB_SQLDatabaseEvt(sNetID := '', tTimeout := T#5S);
+	fbSqlCommand : FB_SQLCommandEvt(sNetID := '', tTimeout := T#5S) ;
     tcMessage    : I_TcMessage;	
 	nState : INT ;
 	fbPulse : R_TRIG ;
