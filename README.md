@@ -7,6 +7,9 @@ Este repositório contém um programa de exemplo com as funções de escrita e l
 A explicação pode ser visualizada no blog: https://automacaoweb.wordpress.com/tf6420/
 
 
+
+
+(*********************************************************************************************************************************)
 ENGLISH:
 
 This repository contains an example program with writing and reading functions in PLC Expert Mode and SQL Expert Mode.
