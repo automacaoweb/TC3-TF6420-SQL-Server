@@ -53,6 +53,9 @@
     <Compile Include="POUs\PLC Mode\PRG_WriteDatabase.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\SQL Mode\PRG_CreateDatabase.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\SQL Mode\PRG_CreateTableSqlMode.TcPOU">
       <SubType>Code</SubType>
     </Compile>

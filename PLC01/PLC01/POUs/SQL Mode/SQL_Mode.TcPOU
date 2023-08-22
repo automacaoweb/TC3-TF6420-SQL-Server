@@ -12,7 +12,9 @@ PRG_DeleteRowSqlMode();
 
 PRG_ReadDatabaseSqlMode();
 
-PRG_WriteDatabaseSqlMode();]]></ST>
+PRG_WriteDatabaseSqlMode();
+
+PRG_CreateDatabase();]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

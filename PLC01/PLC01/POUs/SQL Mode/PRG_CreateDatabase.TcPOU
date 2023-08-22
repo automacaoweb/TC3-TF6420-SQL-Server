@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PRG_CreateDatabase" Id="{6f5025e6-6f4a-41b5-96dd-0a7770fc89ff}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_CreateDatabase
+VAR
+(* CRIAR TABELA / CREATE TABLE / CREAR TABLA *)	
+	fbCreateDatabase : FB_SQLMode_ExecuteComandWithoutData ;
+	bCreateDatabase : BOOL ;
+	bDatabaseCreated : BOOL ;
+	sSqlCmdCreateDatabse : STRING(512) ;
+	sError : STRING ;	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[sSqlCmdCreateDatabse := 'CREATE DATABASE NomeDoBancoDeDados;';
+
+fbCreateDatabase(bExecute:= bCreateDatabase, 
+			  hDBID:= 1, 
+			  sCommandSql:= sSqlCmdCreateDatabse, 
+			  bCommandOk=> bDatabaseCreated,
+			  sError => sError);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
