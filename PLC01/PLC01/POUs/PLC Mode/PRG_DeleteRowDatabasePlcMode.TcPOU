@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="PRG_DeleteRowDatabase" Id="{80134a66-fc81-4c91-bdc0-42c1ae9c95c7}" SpecialFunc="None">
-    <Declaration><![CDATA[PROGRAM PRG_DeleteRowDatabase
+  <POU Name="PRG_DeleteRowDatabasePlcMode" Id="{80134a66-fc81-4c91-bdc0-42c1ae9c95c7}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_DeleteRowDatabasePlcMode
 VAR
 //Variáveis de conexão / Connection variables
 	hDBID: UDINT := 1 ;							//DB ID

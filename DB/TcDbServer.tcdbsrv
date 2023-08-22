@@ -11,7 +11,5 @@
   <MaxByteArrayLength>256</MaxByteArrayLength>
   <MaxStringLength>256</MaxStringLength>
   <WSTRINGSupportActive>False</WSTRINGSupportActive>
-  <TcDbSrvProject>
-    <tcdbsrvdbCompile Include="TcDbServer\DB\DB.tcdbsrvdb" />
-  </TcDbSrvProject>
+  <TcDbSrvProject />
 </ServerSettings>

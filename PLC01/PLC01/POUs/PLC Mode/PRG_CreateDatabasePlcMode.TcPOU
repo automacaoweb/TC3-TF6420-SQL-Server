@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PRG_CreateDatabasePlcMode" Id="{9528a9e7-72bf-45f7-bea5-7d077804dccf}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_CreateDatabasePlcMode
+VAR
+    fbPLCDBCreate : FB_PLCDBCreateEvt(sNetID := '', tTimeout := T#5S);
+    stConfigDB    : T_DBConfig_MsSQL;
+    hDBID         : UDINT ;
+    tcMessage     : I_TcMessage;
+	nState : INT ;	
+	bCreateDatabase: BOOL;
+	sMessage : STRING ;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[stConfigDB.sProvider := 'SQLOLEDB' ;
+stConfigDB.sServer:= 'DOUGLASC-NB01\SQLEXPRESS';
+stConfigDB.sDatabase := 'MyDatabase123';
+stConfigDB.bAuthentification := TRUE;
+stConfigDB.sUserID := 'sa';
+stConfigDB.sPassword := 'sa';
+
+IF bCreateDatabase = TRUE THEN
+	IF fbPLCDBCreate.Database(
+		pDatabaseConfig:= ADR(stConfigDB),
+		cbDatabaseConfig := SIZEOF(stConfigDB),
+		bCreateXMLConfig := TRUE,
+		pDBID := ADR(hDBID))
+	THEN
+		IF fbPLCDBCreate.bError THEN
+			tcMessage := fbPLCDBCreate.ipTcResult;
+			bCreateDatabase := FALSE ;
+			sMessage := 'Error';
+		ELSE
+			bCreateDatabase := FALSE ;
+			sMessage := 'OK';
+		END_IF
+	END_IF
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="PRG_WriteDatabase" Id="{fc16a8ad-f179-40ad-b9e0-ea89da21bdad}" SpecialFunc="None">
-    <Declaration><![CDATA[PROGRAM PRG_WriteDatabase
+  <POU Name="PRG_WriteDatabasePlcMode" Id="{fc16a8ad-f179-40ad-b9e0-ea89da21bdad}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_WriteDatabasePlcMode
 VAR
 	hDBID: UDINT := 1 ;							//DB ID
     sTableName: T_MaxString := 'TB_PLCMODE' ;	//NOME DA TABELA / TABLE NAME / NOMBRE DA TABLA

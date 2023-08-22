@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="PRG_CreateDatabase" Id="{6f5025e6-6f4a-41b5-96dd-0a7770fc89ff}" SpecialFunc="None">
-    <Declaration><![CDATA[PROGRAM PRG_CreateDatabase
+  <POU Name="PRG_CreateDatabaseSqlMode" Id="{6f5025e6-6f4a-41b5-96dd-0a7770fc89ff}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_CreateDatabaseSqlMode
 VAR
 (* CRIAR TABELA / CREATE TABLE / CREAR TABLA *)	
 	fbCreateDatabase : FB_SQLMode_ExecuteComandWithoutData ;

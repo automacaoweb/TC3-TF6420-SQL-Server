@@ -41,19 +41,22 @@
     <Compile Include="POUs\PLC Mode\PLC_Mode.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\PLC Mode\PRG_CreateTable.TcPOU">
+    <Compile Include="POUs\PLC Mode\PRG_CreateDatabasePlcMode.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\PLC Mode\PRG_DeleteRowDatabase.TcPOU">
+    <Compile Include="POUs\PLC Mode\PRG_CreateTablePlcMode.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\PLC Mode\PRG_ReadDatabase.TcPOU">
+    <Compile Include="POUs\PLC Mode\PRG_DeleteRowDatabasePlcMode.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\PLC Mode\PRG_WriteDatabase.TcPOU">
+    <Compile Include="POUs\PLC Mode\PRG_ReadDatabasePlcMode.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\SQL Mode\PRG_CreateDatabase.TcPOU">
+    <Compile Include="POUs\PLC Mode\PRG_WriteDatabasePlcMode.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\SQL Mode\PRG_CreateDatabaseSqlMode.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\SQL Mode\PRG_CreateTableSqlMode.TcPOU">

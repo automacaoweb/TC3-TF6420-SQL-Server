@@ -14,7 +14,7 @@ PRG_ReadDatabaseSqlMode();
 
 PRG_WriteDatabaseSqlMode();
 
-PRG_CreateDatabase();]]></ST>
+PRG_CreateDatabaseSqlMode();]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

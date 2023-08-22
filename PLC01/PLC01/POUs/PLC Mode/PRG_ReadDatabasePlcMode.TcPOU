@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="PRG_ReadDatabase" Id="{b41990ae-1f9c-49fc-9016-3c48e85b39cf}" SpecialFunc="None">
-    <Declaration><![CDATA[PROGRAM PRG_ReadDatabase
+  <POU Name="PRG_ReadDatabasePlcMode" Id="{b41990ae-1f9c-49fc-9016-3c48e85b39cf}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_ReadDatabasePlcMode
 VAR
 //Variáveis gerais
 	hDBID: UDINT := 1 ;							//DB ID - Ver banco no database server

@@ -11,11 +11,6 @@
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <tcdbsrvdbCompile Include="TcDbServer\DB\DB.tcdbsrvdb">
-      <DependentUpon>TcDbServer.tcdbsrv</DependentUpon>
-    </tcdbsrvdbCompile>
-  </ItemGroup>
   <!-- This next bit is required unless the macro used to Import your targets is defined in an MSBuild toolset. -->
   <ProjectExtensions>
     <ProjectCapabilities>

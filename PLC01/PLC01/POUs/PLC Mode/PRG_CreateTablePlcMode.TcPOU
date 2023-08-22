@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="PRG_CreateTable" Id="{82a831bd-de57-4e0e-a63f-a9339662086b}" SpecialFunc="None">
-    <Declaration><![CDATA[PROGRAM PRG_CreateTable
+  <POU Name="PRG_CreateTablePlcMode" Id="{82a831bd-de57-4e0e-a63f-a9339662086b}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_CreateTablePlcMode
 VAR
     fbPLCDBCreate	: FB_PLCDBCreateEvt(sNetID := '', tTimeout := T#5S);	//Bloco para criar a tabela
     ColumnInfo		: ARRAY [0..8] OF ST_ColumnInfo ;						//Estrutura com a tabela a ser criada

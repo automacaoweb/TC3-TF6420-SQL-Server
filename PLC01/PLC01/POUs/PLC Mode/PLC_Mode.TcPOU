@@ -6,15 +6,15 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[
+      <ST><![CDATA[PRG_CreateDatabasePlcMode();
 
-PRG_CreateTable();
+PRG_CreateTablePlcMode();
 
-PRG_DeleteRowDatabase();
+PRG_DeleteRowDatabasePlcMode();
 
-PRG_WriteDatabase();
+PRG_WriteDatabasePlcMode();
 
-PRG_ReadDatabase();]]></ST>
+PRG_ReadDatabasePlcMode();]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>
